@@ -284,11 +284,11 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## 📧 Contact & Support
 
 ### Questions?
-- Open an [Issue](https://github.com/YOUR-USERNAME/ai-phishing-detection-system/issues)
-- Email: your.email@example.com
+- Open an [Issue](https://github.com/juliemaai/ai-phishing-detection-system/issues)
+- Email: jmai0079@ung.edu
 
 ### Found a Bug?
-- Check existing [Issues](https://github.com/YOUR-USERNAME/ai-phishing-detection-system/issues)
+- Check existing [Issues](https://github.com/juliemaai/ai-phishing-detection-system/issues)
 - Create new issue with detailed description
 - Include screenshots if applicable
 
