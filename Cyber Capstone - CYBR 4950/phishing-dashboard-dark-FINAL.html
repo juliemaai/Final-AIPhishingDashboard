@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GriggsAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: #1e293b;
+            padding: 28px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 24px;
+            border: 1px solid #334155;
+        }
+
+        .header h1 {
+            color: #f1f5f9;
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header p {
+            color: #94a3b8;
+            font-size: 15px;
+        }
+
+        .config-banner {
+            background: linear-gradient(135deg, #422006 0%, #581c0c 100%);
+            border: 2px solid #92400e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: none;
+        }
+
+        .config-banner.show {
+            display: block;
+        }
+
+        .config-banner h3 {
+            color: #fbbf24;
+            font-size: 16px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .config-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #475569;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 10px;
+            transition: border 0.2s;
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+
+        .config-input:focus {
+            outline: none;
+            border-color: #fbbf24;
+        }
+
+        .config-banner button {
+            background: #f59e0b;
+            color: #1e293b;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .config-banner button:hover {
+            background: #fbbf24;
+            transform: translateY(-1px);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: #1e293b;
+            padding: 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+        }
+
+        .stat-card.danger::before {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        .stat-card.warning::before {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+
+        .stat-card.success::before {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: #f1f5f9;
+            line-height: 1;
+        }
+
+        .stat-card.danger .stat-value {
+            color: #f87171;
+        }
+
+        .stat-card.warning .stat-value {
+            color: #fbbf24;
+        }
+
+        .stat-card.success .stat-value {
+            color: #34d399;
+        }
+
+        .loading-spinner {
+            display: none;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #334155;
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .loading-spinner.active {
+            display: block;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .controls {
+            background: #1e293b;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            margin-bottom: 24px;
+            display: flex;
+            gap: 14px;
+            flex-wrap: wrap;
+            align-items: center;
+            border: 1px solid #334155;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .filter-group label {
+            font-size: 14px;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        select, button {
+            padding: 11px 18px;
+            border-radius: 10px;
+            border: 1px solid #475569;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        select {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        select:hover {
+            border-color: #64748b;
+        }
+
+        button {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+            border: none;
+        }
+
+        button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.5);
+        }
+
+        button:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        button.secondary {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        button.secondary:hover {
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.5);
+        }
+
+        .email-list {
+            background: #1e293b;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            overflow: hidden;
+            border: 1px solid #334155;
+        }
+
+        .email-item {
+            border-bottom: 1px solid #334155;
+            padding: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .email-item:hover {
+            background: #0f172a;
+            transform: translateX(4px);
+        }
+
+        .email-item:last-child {
+            border-bottom: none;
+        }
+
+        .email-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .email-meta {
+            flex: 1;
+        }
+
+        .email-subject {
+            font-size: 17px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 6px;
+        }
+
+        .email-from {
+            font-size: 14px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .email-from .domain {
+            background: #0f172a;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #cbd5e1;
+        }
+
+        .email-badges {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.phishing {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge.spam {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fcd34d;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .badge.legitimate {
+            background: rgba(52, 211, 153, 0.2);
+            color: #6ee7b7;
+            border: 1px solid rgba(52, 211, 153, 0.3);
+        }
+
+        .badge.high {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .badge.medium {
+            background: rgba(251, 191, 36, 0.2);
+            color: #fcd34d;
+            border: 1px solid rgba(251, 191, 36, 0.3);
+        }
+
+        .badge.low {
+            background: rgba(96, 165, 250, 0.2);
+            color: #93c5fd;
+            border: 1px solid rgba(96, 165, 250, 0.3);
+        }
+
+        .confidence {
+            font-size: 12px;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        .email-preview {
+            color: #cbd5e1;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 14px;
+        }
+
+        .email-details {
+            font-size: 13px;
+            color: #94a3b8;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+        }
+
+        .modal-header {
+            padding: 28px;
+            border-bottom: 2px solid #334155;
+        }
+
+        .modal-header h2 {
+            color: #f1f5f9;
+            font-size: 22px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .modal-body {
+            padding: 28px;
+        }
+
+        .detail-section {
+            margin-bottom: 28px;
+        }
+
+        .detail-section h3 {
+            color: #cbd5e1;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .detail-content {
+            background: #0f172a;
+            padding: 18px;
+            border-radius: 10px;
+            font-size: 14px;
+            line-height: 1.7;
+            color: #cbd5e1;
+            white-space: pre-wrap;
+            border-left: 4px solid #6366f1;
+        }
+
+        .review-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .review-actions button {
+            padding: 14px;
+            width: 100%;
+            font-size: 15px;
+        }
+
+        .review-actions button.danger {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .review-actions button.warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .review-actions button.success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .review-actions button.selected {
+            border: 3px solid #60a5fa;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 14px;
+            border: 1px solid #475569;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            background: #0f172a;
+            color: #e2e8f0;
+            resize: vertical;
+            min-height: 90px;
+            transition: border 0.2s;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+        }
+
+        .modal-footer {
+            padding: 24px 28px;
+            border-top: 2px solid #334155;
+            display: flex;
+            justify-content: flex-end;
+            gap: 14px;
+        }
+
+        .close-btn {
+            background: #475569;
+            color: #e2e8f0;
+        }
+
+        .close-btn:hover {
+            background: #64748b;
+        }
+
+        .priority-high {
+            border-left: 5px solid #ef4444;
+        }
+
+        .priority-medium {
+            border-left: 5px solid #f59e0b;
+        }
+
+        .priority-low {
+            border-left: 5px solid #10b981;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            color: #64748b;
+        }
+
+        .empty-state svg {
+            width: 72px;
+            height: 72px;
+            margin-bottom: 20px;
+            opacity: 0.4;
+        }
+
+        .alert {
+            padding: 14px 18px;
+            border-radius: 10px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .alert.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .alert.success {
+            background: rgba(16, 185, 129, 0.2);
+            color: #6ee7b7;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .alert.info {
+            background: rgba(59, 130, 246, 0.2);
+            color: #93c5fd;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+        }
+
+        .indicator-tag {
+            display: inline-block;
+            background: #0f172a;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            margin: 2px;
+            color: #cbd5e1;
+            border: 1px solid #334155;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <span>🛡️</span>
+                GriggsAI
+            </h1>
+            <p>Phishing Detection Review Dashboard</p>
+        </div>
+
+        <div class="config-banner" id="configBanner">
+            <h3>⚙️ Configure n8n API Connection</h3>
+            <p style="color: #6c757d; font-size: 13px; margin-bottom: 14px;">
+                Enter your n8n webhook URLs from Workflow 2 to connect the dashboard
+            </p>
+            <input 
+                type="text" 
+                class="config-input" 
+                id="fetchApiUrl" 
+                placeholder="Fetch Emails Webhook URL (e.g., https://your-n8n.app.n8n.cloud/webhook/fetch-emails)"
+            >
+            <input 
+                type="text" 
+                class="config-input" 
+                id="updateApiUrl" 
+                placeholder="Update Review Webhook URL (e.g., https://your-n8n.app.n8n.cloud/webhook/update-review)"
+            >
+            <button onclick="saveConfig()">💾 Save Configuration</button>
+        </div>
+
+        <div id="alertContainer"></div>
+
+        <div class="stats-grid">
+            <div class="stat-card danger">
+                <div class="stat-label">🚨 Phishing</div>
+                <div class="stat-value" id="phishingCount">-</div>
+                <div class="loading-spinner" id="spinner1"></div>
+            </div>
+            <div class="stat-card warning">
+                <div class="stat-label">📧 Spam</div>
+                <div class="stat-value" id="spamCount">-</div>
+            </div>
+            <div class="stat-card success">
+                <div class="stat-label">✅ Legitimate</div>
+                <div class="stat-value" id="legitimateCount">-</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">🎯 AI Accuracy</div>
+                <div class="stat-value" id="accuracyPercent">-</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <div class="filter-group">
+                <label>Filter:</label>
+                <select id="filterSelect">
+                    <option value="all">All Emails</option>
+                    <option value="phishing">Phishing</option>
+                    <option value="spam">Spam</option>
+                    <option value="legitimate">Legitimate</option>
+                    <option value="high">High Priority</option>
+                </select>
+            </div>
+            <div class="filter-group">
+                <label>Sort:</label>
+                <select id="sortSelect">
+                    <option value="priority">Priority (High → Low)</option>
+                    <option value="confidence">Confidence (Low → High)</option>
+                    <option value="date">Date (Newest First)</option>
+                </select>
+            </div>
+            <button onclick="fetchEmails()" style="margin-left: auto;" id="refreshBtn">
+                🔄 Refresh Data
+            </button>
+            <button class="secondary" onclick="exportReport()">📊 Export Report</button>
+        </div>
+
+        <div class="email-list" id="emailList">
+            <div class="empty-state">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                </svg>
+                <p style="font-size: 20px; font-weight: 600; margin-bottom: 10px;">Loading emails...</p>
+                <p>Connecting to n8n workflow</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="reviewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalSubject">Email Subject</h2>
+                <div style="display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap;" id="modalBadges"></div>
+            </div>
+            <div class="modal-body">
+                <div class="detail-section">
+                    <h3>📨 Sender Information</h3>
+                    <div class="detail-content" id="modalSender"></div>
+                </div>
+                <div class="detail-section">
+                    <h3>📄 Email Content</h3>
+                    <div class="detail-content" id="modalBody"></div>
+                </div>
+                <div class="detail-section" id="linksSection">
+                    <h3>🔗 Links Found</h3>
+                    <div class="detail-content" id="modalLinks"></div>
+                </div>
+                <div class="detail-section">
+                    <h3>🤖 AI Analysis</h3>
+                    <div class="detail-content" id="modalReasoning"></div>
+                </div>
+                <div class="detail-section" id="indicatorsSection">
+                    <h3>⚠️ Threat Indicators</h3>
+                    <div class="detail-content" id="modalIndicators"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - UPDATE THESE URLs
+        let config = {
+            fetchApiUrl: 'https://juliemai19.app.n8n.cloud/webhook/get-emails',
+            updateApiUrl: 'https://juliemai19.app.n8n.cloud/webhook/review-update'
+        };
+
+        let emails = [];
+        let currentEmail = null;
+        let currentEmailIndex = -1;
+        let currentClassification = null;
+
+        // Initialize
+        function init() {
+            loadConfig();
+            if (config.fetchApiUrl) {
+                fetchEmails();
+            } else {
+                document.getElementById('configBanner').classList.add('show');
+            }
+            
+            // Event listeners
+            document.getElementById('filterSelect').addEventListener('change', renderEmails);
+            document.getElementById('sortSelect').addEventListener('change', renderEmails);
+            
+            // Auto-refresh every 2 minutes
+            setInterval(() => {
+                if (config.fetchApiUrl) {
+                    fetchEmails(true);
+                }
+            }, 120000);
+        }
+
+        function loadConfig() {
+            const saved = localStorage.getItem('phishingDashboardConfig');
+            if (saved) {
+                config = JSON.parse(saved);
+            }
+        }
+
+        function saveConfig() {
+            const fetchUrl = document.getElementById('fetchApiUrl').value.trim();
+            const updateUrl = document.getElementById('updateApiUrl').value.trim();
+            
+            if (!fetchUrl || !updateUrl) {
+                showAlert('Please enter both webhook URLs', 'error');
+                return;
+            }
+            
+            config.fetchApiUrl = fetchUrl;
+            config.updateApiUrl = updateUrl;
+            localStorage.setItem('phishingDashboardConfig', JSON.stringify(config));
+            
+            document.getElementById('configBanner').classList.remove('show');
+            showAlert('✅ Configuration saved! Fetching emails...', 'success');
+            
+            fetchEmails();
+        }
+
+        async function fetchEmails(silent = false) {
+            if (!config.fetchApiUrl) {
+                showAlert('Please configure API URLs first', 'error');
+                document.getElementById('configBanner').classList.add('show');
+                return;
+            }
+
+            if (!silent) {
+                document.getElementById('spinner1').classList.add('active');
+                document.getElementById('refreshBtn').disabled = true;
+                document.getElementById('refreshBtn').textContent = '⏳ Loading...';
+            }
+
+            try {
+                // Use GET request as specified in the API workflow
+                const response = await fetch(config.fetchApiUrl, {
+                    method: 'GET',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                // Handle the API response format: {emails: [], total: X, pending: Y, timestamp: Z}
+                if (data.emails && Array.isArray(data.emails)) {
+                    emails = data.emails;
+                } else if (Array.isArray(data)) {
+                    emails = data;
+                } else {
+                    throw new Error('Unexpected response format');
+                }
+
+                renderEmails();
+                updateStats();
+                
+                if (!silent) {
+                    showAlert(`✅ Loaded ${emails.length} emails successfully`, 'success');
+                }
+
+            } catch (error) {
+                console.error('Fetch error:', error);
+                showAlert(`❌ Error: ${error.message}`, 'error');
+                
+                document.getElementById('emailList').innerHTML = `
+                    <div class="empty-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                        </svg>
+                        <p style="font-size: 20px; font-weight: 600; margin-bottom: 10px;">Connection Error</p>
+                        <p>Could not connect to n8n. Check your configuration.</p>
+                        <button onclick="document.getElementById('configBanner').classList.add('show')" style="margin-top: 20px;">
+                            ⚙️ Configure API
+                        </button>
+                    </div>
+                `;
+            } finally {
+                if (!silent) {
+                    document.getElementById('spinner1').classList.remove('active');
+                    document.getElementById('refreshBtn').disabled = false;
+                    document.getElementById('refreshBtn').textContent = '🔄 Refresh Data';
+                }
+            }
+        }
+
+        function renderEmails() {
+            const filter = document.getElementById('filterSelect').value;
+            const sort = document.getElementById('sortSelect').value;
+
+            let filtered = emails.filter(email => {
+                if (filter === 'all') return true;
+                if (filter === 'high') return email.priority === 'high';
+                
+                const classification = email.ai_classification;
+                return classification === filter;
+            });
+
+            filtered.sort((a, b) => {
+                if (sort === 'priority') {
+                    const priorityOrder = { high: 3, medium: 2, low: 1 };
+                    return (priorityOrder[b.priority] || 0) - (priorityOrder[a.priority] || 0);
+                } else if (sort === 'confidence') {
+                    return parseFloat(a.ai_confidence || 0) - parseFloat(b.ai_confidence || 0);
+                } else {
+                    return new Date(b.received_date) - new Date(a.received_date);
+                }
+            });
+
+            const listEl = document.getElementById('emailList');
+            
+            if (filtered.length === 0) {
+                listEl.innerHTML = `
+                    <div class="empty-state">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
+                        </svg>
+                        <p style="font-size: 20px; font-weight: 600; margin-bottom: 10px;">No emails match your filter</p>
+                        <p>Try selecting a different filter</p>
+                    </div>
+                `;
+                return;
+            }
+
+            listEl.innerHTML = filtered.map((email, index) => {
+                const classification = email.reviewer_decision || email.ai_classification;
+                const priorityClass = `priority-${email.priority || 'low'}`;
+                
+                
+                const timeAgo = getTimeAgo(email.received_date);
+                const confidence = parseFloat(email.ai_confidence || 0);
+                
+                return `
+                    <div class="email-item ${priorityClass}" onclick='openReviewModal(${index})'>
+                        <div class="email-header">
+                            <div class="email-meta">
+                                <div class="email-subject">${escapeHtml(email.subject || 'No Subject')}</div>
+                                <div class="email-from">
+                                    From: ${escapeHtml(email.sender_name || email.sender)}
+                                    <span class="domain">${escapeHtml(email.sender_domain)}</span>
+                                </div>
+                            </div>
+                            <div class="email-badges">
+                                <span class="badge ${classification}">${classification}</span>
+                                <span class="badge ${email.risk_level}">${email.risk_level} risk</span>
+                                <span class="confidence">${Math.round(confidence)}%</span>
+                            </div>
+                        </div>
+                        <div class="email-preview">${escapeHtml((email.body || '').substring(0, 200))}...</div>
+                        <div class="email-details">
+                            <span>${timeAgo}</span>
+                            <span>•</span>
+                            <span>Priority: ${email.priority || 'low'}</span>
+                            ${email.link_count ? `<span>• ${email.link_count} links</span>` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getTimeAgo(timestamp) {
+            if (!timestamp) return 'Unknown';
+            const date = new Date(timestamp);
+            const seconds = Math.floor((new Date() - date) / 1000);
+            if (seconds < 60) return 'Just now';
+            const minutes = Math.floor(seconds / 60);
+            if (minutes < 60) return `${minutes}m ago`;
+            const hours = Math.floor(minutes / 60);
+            if (hours < 24) return `${hours}h ago`;
+            const days = Math.floor(hours / 24);
+            if (days < 7) return `${days}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        function updateStats() {
+
+            document.getElementById('phishingCount').textContent = 
+                emails.filter(e => e.ai_classification === 'phishing').length;
+            document.getElementById('spamCount').textContent = 
+                emails.filter(e => e.ai_classification === 'spam').length;
+            document.getElementById('legitimateCount').textContent = 
+                emails.filter(e => e.ai_classification === 'legitimate').length;
+            
+            // Calculate AI accuracy
+            const totalConfidence = emails.reduce((sum, e) => sum + parseFloat(e.ai_confidence || 0), 0);
+            const avgConfidence = emails.length > 0 ? Math.round(totalConfidence / emails.length) : 0;
+            document.getElementById('accuracyPercent').textContent = `${avgConfidence}%`;
+
+        }
+
+        function openReviewModal(index) {
+            currentEmailIndex = index;
+            currentEmail = emails[index];
+            currentClassification = currentEmail.ai_classification;
+            
+            document.getElementById('modalSubject').textContent = currentEmail.subject || 'No Subject';
+            
+            document.getElementById('modalSender').textContent = 
+                `${currentEmail.sender_name || 'Unknown'}\n${currentEmail.sender}\nDomain: ${currentEmail.sender_domain}`;
+            
+            document.getElementById('modalBody').textContent = currentEmail.body || 'No content';
+            
+            if (currentEmail.links_found) {
+                document.getElementById('linksSection').style.display = 'block';
+                document.getElementById('modalLinks').textContent = 
+                    `${currentEmail.link_count} link(s) found:\n\n${currentEmail.links_found}`;
+            } else {
+                document.getElementById('linksSection').style.display = 'none';
+            }
+            
+            document.getElementById('modalReasoning').textContent = 
+                currentEmail.ai_reasoning || 'No AI reasoning available';
+            
+            if (currentEmail.indicators_found) {
+                document.getElementById('indicatorsSection').style.display = 'block';
+                const indicators = currentEmail.indicators_found.split(',').map(i => i.trim());
+                document.getElementById('modalIndicators').innerHTML = 
+                    indicators.map(ind => `<span class="indicator-tag">${escapeHtml(ind)}</span>`).join(' ');
+            } else {
+                document.getElementById('indicatorsSection').style.display = 'none';
+            }
+            
+            const badgesHtml = `
+                <span class="badge ${currentEmail.ai_classification}">AI: ${currentEmail.ai_classification}</span>
+                <span class="badge ${currentEmail.risk_level}">${currentEmail.risk_level} risk</span>
+                <span class="confidence">${Math.round(parseFloat(currentEmail.ai_confidence))}% confidence</span>
+            `;
+            document.getElementById('modalBadges').innerHTML = badgesHtml;
+            
+            document.getElementById('reviewModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('reviewModal').classList.remove('active');
+            currentEmail = null;
+            currentEmailIndex = -1;
+            currentClassification = null;
+        }
+
+        function exportReport() {
+            const report = {
+                generatedAt: new Date().toISOString(),
+                totalEmails: emails.length,
+                summary: {
+                    phishing: emails.filter(e => (e.reviewerDecision || e.aiClassification) === 'phishing').length,
+                    spam: emails.filter(e => (e.reviewerDecision || e.aiClassification) === 'spam').length,
+                    legitimate: emails.filter(e => (e.reviewerDecision || e.aiClassification) === 'legitimate').length,
+                    reviewed: emails.filter(e => e.status === 'reviewed').length,
+                },
+                emails: emails
+            };
+            
+            const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `phishing-report-${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showAlert('📊 Report exported successfully!', 'success');
+        }
+
+        function showAlert(message, type = 'info') {
+            const container = document.getElementById('alertContainer');
+            const alert = document.createElement('div');
+            alert.className = `alert ${type}`;
+            alert.textContent = message;
+            container.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.remove();
+            }, 5000);
+        }
+
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        document.getElementById('reviewModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

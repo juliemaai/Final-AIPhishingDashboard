@@ -1,0 +1,396 @@
+[
+  {
+    "id": 1,
+    "sender": "notifications@linkedin.com",
+    "sender_name": "LinkedIn",
+    "subject": "You appeared in 12 searches this week",
+    "body": "Hi there,\n\nYour profile appeared in 12 searches this week. People are looking for candidates with your skills and experience.\n\nUpdate your profile to stand out:\n- Add your latest accomplishments\n- Update your headline\n- Request recommendations\n\nBest regards,\nThe LinkedIn Team",
+    "timestamp": "2025-10-08T09:30:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 2,
+    "sender": "security@paypa1-verify.com",
+    "sender_name": "PayPal Security",
+    "subject": "URGENT: Verify Your Account Within 24 Hours",
+    "body": "Dear Valued Customer,\n\nWe have detected unusual activity on your PayPal account. Your account has been temporarily limited.\n\nYou must verify your identity immediately to avoid permanent suspension.\n\nCLICK HERE TO VERIFY: http://paypa1-verify.com/secure/login\n\nFailure to verify within 24 hours will result in account closure.\n\nPayPal Security Team",
+    "timestamp": "2025-10-08T14:22:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Suspicious domain (paypa1 instead of paypal)",
+      "Urgent threat language",
+      "Suspicious link",
+      "Generic greeting",
+      "Pressure tactics"
+    ]
+  },
+  {
+    "id": 3,
+    "sender": "receipt@amazon.com",
+    "sender_name": "Amazon.com",
+    "subject": "Your Amazon.com order #112-8394857-1234567",
+    "body": "Hello,\n\nThank you for your order. Your order details:\n\nOrder #112-8394857-1234567\nWireless Mouse - Black\nQuantity: 1\nTotal: $24.99\n\nEstimated delivery: October 12, 2025\n\nYou can track your order at amazon.com/orders\n\nThanks for shopping with us!\nAmazon.com",
+    "timestamp": "2025-10-07T16:45:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 4,
+    "sender": "no-reply@amaz0n-security.net",
+    "sender_name": "Amazon Security Alert",
+    "subject": "Your order has been placed - Confirmation Required",
+    "body": "Dear Customer,\n\nA new order has been placed on your account:\n\niPhone 15 Pro Max - $1,299.99\nShipping to: Unknown Address\n\nIf you did not make this purchase, click below immediately:\nhttp://amaz0n-security.net/cancel-order\n\nYour account will be charged in 2 hours if not cancelled.\n\nAmazon Security",
+    "timestamp": "2025-10-08T11:15:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Suspicious domain (amaz0n instead of amazon)",
+      "Creates false urgency",
+      "Fear-based tactics",
+      "Suspicious link",
+      "Unusual 'confirmation required' for order"
+    ]
+  },
+  {
+    "id": 5,
+    "sender": "team@github.com",
+    "sender_name": "GitHub",
+    "subject": "Your pull request was merged",
+    "body": "Hi,\n\nYour pull request #456 in repository 'user/project' has been merged by collaborator-name.\n\nView the merged changes:\nhttps://github.com/user/project/pull/456\n\nThanks,\nGitHub",
+    "timestamp": "2025-10-08T10:05:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 6,
+    "sender": "admin@company-hr.biz",
+    "sender_name": "HR Department",
+    "subject": "Important: Update Your Direct Deposit Information",
+    "body": "Hello Employee,\n\nOur payroll system is being upgraded. All employees must update their direct deposit information by end of day.\n\nClick here to update: http://company-payroll-update.biz/login\n\nEnter your employee ID and bank account details.\n\nIf not completed today, your next paycheck may be delayed.\n\nHR Department",
+    "timestamp": "2025-10-08T08:30:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Suspicious external domain",
+      "Requests sensitive financial information",
+      "Generic greeting",
+      "Urgent deadline",
+      "Unusual request via email"
+    ]
+  },
+  {
+    "id": 7,
+    "sender": "billing@spotify.com",
+    "sender_name": "Spotify",
+    "subject": "Your Premium subscription payment",
+    "body": "Hi,\n\nYour Spotify Premium subscription payment of $10.99 was successfully processed on October 8, 2025.\n\nNext billing date: November 8, 2025\n\nManage your subscription: https://www.spotify.com/account\n\nEnjoy your music!\nSpotify",
+    "timestamp": "2025-10-08T06:00:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 8,
+    "sender": "support@micros0ft-security.com",
+    "sender_name": "Microsoft Security Team",
+    "subject": "Security Alert: Suspicious Sign-in Attempt Detected",
+    "body": "Dear User,\n\nWe detected a suspicious sign-in attempt to your Microsoft account from an unknown location.\n\nLocation: Nigeria\nDevice: Unknown\n\nIf this was not you, secure your account immediately:\nhttp://micros0ft-security.com/verify\n\nYou have 6 hours to respond or your account will be permanently locked.\n\nMicrosoft Security",
+    "timestamp": "2025-10-08T13:50:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Misspelled domain (micros0ft)",
+      "Extreme urgency",
+      "Threatening account closure",
+      "Suspicious link",
+      "Poor grammar"
+    ]
+  },
+  {
+    "id": 9,
+    "sender": "newsletter@techcrunch.com",
+    "sender_name": "TechCrunch",
+    "subject": "Daily Crunch: AI startup raises $100M",
+    "body": "Good morning,\n\nHere are today's top tech stories:\n\n• AI startup raises $100M Series B\n• Apple announces new product event\n• Cybersecurity breach affects major retailer\n\nRead more at: https://techcrunch.com/daily-crunch\n\nUnsubscribe | Manage preferences\n\nTechCrunch",
+    "timestamp": "2025-10-08T07:00:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 10,
+    "sender": "prize@lottery-winner.xyz",
+    "sender_name": "International Lottery Commission",
+    "subject": "CONGRATULATIONS! You've Won $2,500,000",
+    "body": "DEAR LUCKY WINNER,\n\nYOUR EMAIL HAS BEEN SELECTED IN OUR INTERNATIONAL LOTTERY DRAW!\n\nPRIZE AMOUNT: $2,500,000 USD\n\nTo claim your prize, send the following:\n- Full name\n- Address\n- Phone number\n- Bank account details\n- Processing fee of $500\n\nSend to: claims@lottery-winner.xyz\n\nYou must respond within 48 hours or prize will be forfeited!\n\nCongratulations,\nLottery Commission",
+    "timestamp": "2025-10-08T15:30:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Too good to be true",
+      "Requests personal and financial information",
+      "Requests payment (processing fee scam)",
+      "ALL CAPS usage",
+      "Suspicious domain",
+      "Unrealistic prize"
+    ]
+  },
+  {
+    "id": 11,
+    "sender": "updates@dropbox.com",
+    "sender_name": "Dropbox",
+    "subject": "Sarah shared a document with you",
+    "body": "Hi,\n\nSarah Johnson shared 'Q4_Budget_Report.pdf' with you on Dropbox.\n\nView file: https://www.dropbox.com/s/abc123/Q4_Budget_Report.pdf\n\nThis link will expire in 30 days.\n\nDropbox",
+    "timestamp": "2025-10-07T14:20:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 12,
+    "sender": "alert@bankofamerica-secure.net",
+    "sender_name": "Bank of America Security",
+    "subject": "Your Account Has Been Locked - Action Required",
+    "body": "Dear Customer,\n\nYour Bank of America account has been locked due to suspicious activity.\n\nWe need you to verify your identity:\n\n1. Click here: http://bankofamerica-secure.net/verify\n2. Enter your online banking credentials\n3. Provide your SSN and card number\n4. Answer security questions\n\nFailure to complete verification within 24 hours will result in permanent account closure.\n\nBank of America Security Team",
+    "timestamp": "2025-10-08T12:45:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Suspicious domain (not official Bank of America domain)",
+      "Requests sensitive information (SSN, card number)",
+      "Threatening language",
+      "Time pressure",
+      "Generic greeting"
+    ]
+  },
+  {
+    "id": 13,
+    "sender": "do-not-reply@netflix.com",
+    "sender_name": "Netflix",
+    "subject": "Your Netflix membership",
+    "body": "Hi,\n\nYour Netflix membership will renew on October 15, 2025.\n\nPlan: Premium (4 screens, Ultra HD)\nPrice: $19.99/month\n\nUpdate your payment method or manage your plan:\nhttps://www.netflix.com/YourAccount\n\nNetflix",
+    "timestamp": "2025-10-08T05:00:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 14,
+    "sender": "ceo@yourcompany.com",
+    "sender_name": "Robert Williams, CEO",
+    "subject": "URGENT: Need Gift Cards for Client",
+    "body": "Hello,\n\nI'm in a meeting and need your help urgently. I need to send gift cards to an important client but I can't leave right now.\n\nCan you purchase 10 x $100 Google Play gift cards and email me the codes? I'll reimburse you immediately.\n\nThis is time sensitive. Please handle ASAP.\n\nRobert Williams\nCEO",
+    "timestamp": "2025-10-08T16:10:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "CEO fraud/impersonation",
+      "Unusual request (gift cards)",
+      "Creates false urgency",
+      "Requests immediate action",
+      "Common gift card scam pattern"
+    ]
+  },
+  {
+    "id": 15,
+    "sender": "noreply@slack.com",
+    "sender_name": "Slack",
+    "subject": "Password reset requested",
+    "body": "Hi there,\n\nYou requested a password reset for your Slack workspace 'company-team'.\n\nReset your password: https://slack.com/reset/abc123xyz\n\nThis link expires in 1 hour.\n\nIf you didn't request this, you can safely ignore this email.\n\nSlack",
+    "timestamp": "2025-10-08T11:30:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 16,
+    "sender": "verify@appleid-support.info",
+    "sender_name": "Apple ID Support",
+    "subject": "Your Apple ID has been disabled",
+    "body": "Dear Apple Customer,\n\nYour Apple ID has been disabled due to security concerns.\n\nReason: Multiple failed login attempts detected from different countries.\n\nTo restore access:\n1. Visit: http://appleid-support.info/unlock\n2. Enter your Apple ID and password\n3. Provide credit card information for verification\n\nYour ID will be permanently disabled if not resolved within 12 hours.\n\nApple Support Team",
+    "timestamp": "2025-10-08T09:00:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Suspicious domain (.info instead of apple.com)",
+      "Requests password and credit card",
+      "Threatening permanent disable",
+      "Time pressure (12 hours)",
+      "Generic greeting"
+    ]
+  },
+  {
+    "id": 17,
+    "sender": "events@eventbrite.com",
+    "sender_name": "Eventbrite",
+    "subject": "Your tickets for Tech Conference 2025",
+    "body": "Hi,\n\nYour registration is confirmed!\n\nEvent: Tech Conference 2025\nDate: November 15, 2025\nLocation: Convention Center, San Francisco\nTickets: 2 x General Admission\n\nView your tickets: https://www.eventbrite.com/e/tickets/123456\n\nSee you there!\nEventbrite",
+    "timestamp": "2025-10-07T13:00:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 18,
+    "sender": "help@we11sfargo-security.com",
+    "sender_name": "Wells Fargo Security",
+    "subject": "Unusual Activity Detected on Your Account",
+    "body": "Dear Wells Fargo Customer,\n\nWe have detected the following suspicious transactions:\n- $1,499.99 - Best Buy\n- $899.00 - Apple Store\n- $2,350.00 - International Wire Transfer\n\nIf you did not authorize these transactions, login immediately:\nhttp://we11sfargo-security.com/disputes\n\nEnter your username, password, and ATM PIN to file a dispute.\n\nThese charges will be finalized in 4 hours if no action is taken.\n\nWells Fargo Fraud Department",
+    "timestamp": "2025-10-08T14:55:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Misspelled domain (we11sfargo with '11' instead of 'll')",
+      "Requests username, password, AND PIN",
+      "Creates panic with fake transactions",
+      "Time pressure",
+      "Suspicious external link"
+    ]
+  },
+  {
+    "id": 19,
+    "sender": "hello@notion.so",
+    "sender_name": "Notion",
+    "subject": "You've been added to a workspace",
+    "body": "Hi,\n\nJohn Smith added you to the 'Marketing Team' workspace on Notion.\n\nGet started: https://www.notion.so/workspace/marketing-team\n\nNew to Notion? Check out our getting started guide:\nhttps://www.notion.so/guides\n\nNotion",
+    "timestamp": "2025-10-08T10:45:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 20,
+    "sender": "support@crypto-exchange.biz",
+    "sender_name": "Crypto Exchange Support",
+    "subject": "Complete KYC Verification - Withdraw Your $50,000",
+    "body": "Hello Investor,\n\nYour crypto trading account shows a balance of $50,000 from recent market gains.\n\nTo withdraw your funds, complete KYC verification:\n\n1. Upload your ID/passport\n2. Provide SSN\n3. Link your bank account\n4. Pay $250 verification fee\n\nVerify now: http://crypto-exchange.biz/kyc\n\nWithout verification, funds will be frozen after 48 hours.\n\nSupport Team",
+    "timestamp": "2025-10-08T17:20:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Unrealistic gains promise",
+      "Requests sensitive documents and SSN",
+      "Requests upfront fee",
+      "Generic greeting",
+      "Suspicious domain",
+      "Threatens fund freezing"
+    ]
+  },
+  {
+    "id": 21,
+    "sender": "no-reply@uber.com",
+    "sender_name": "Uber",
+    "subject": "Your receipt for trip to Downtown",
+    "body": "Hi,\n\nThanks for riding with Uber!\n\nTrip details:\nFrom: 123 Main St\nTo: Downtown Plaza\nDate: October 8, 2025\nFare: $18.50\n\nPayment method: Visa ****1234\n\nView full receipt: https://www.uber.com/receipts/abc123\n\nUber",
+    "timestamp": "2025-10-08T18:30:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 22,
+    "sender": "fedex-delivery@tracking-update.net",
+    "sender_name": "FedEx Delivery",
+    "subject": "Delivery Failure - Package #FX394827",
+    "body": "Dear Customer,\n\nWe attempted to deliver your package but no one was available.\n\nPackage: #FX394827\nAttempts: 3\nStatus: Return to sender in 24 hours\n\nTo reschedule delivery, pay the $3.99 redelivery fee:\nhttp://tracking-update.net/fedex/redeliver\n\nEnter your credit card information to schedule redelivery.\n\nFedEx Delivery Services",
+    "timestamp": "2025-10-08T13:15:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Suspicious domain (not fedex.com)",
+      "Requests payment for redelivery (unusual)",
+      "Generic greeting",
+      "Requests credit card info",
+      "Creates urgency with 24-hour deadline"
+    ]
+  },
+  {
+    "id": 23,
+    "sender": "billing@adobe.com",
+    "sender_name": "Adobe",
+    "subject": "Your Creative Cloud subscription renewal",
+    "body": "Hello,\n\nYour Adobe Creative Cloud subscription has been renewed.\n\nPlan: All Apps\nBilling: $54.99/month\nNext billing date: November 8, 2025\n\nManage your subscription: https://account.adobe.com\n\nAdobe",
+    "timestamp": "2025-10-08T06:30:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 24,
+    "sender": "tax-refund@irs-treasury.org",
+    "sender_name": "IRS Tax Refund Department",
+    "subject": "Tax Refund Notification - $2,847.00",
+    "body": "INTERNAL REVENUE SERVICE\n\nDear Taxpayer,\n\nYou are eligible for a tax refund of $2,847.00.\n\nTo receive your refund:\n1. Click: http://irs-treasury.org/refund\n2. Enter SSN and date of birth\n3. Provide bank account for direct deposit\n4. Pay $49.99 processing fee\n\nRefund will be issued within 3-5 business days.\n\nThis notification expires in 72 hours.\n\nInternal Revenue Service\nTax Refund Department",
+    "timestamp": "2025-10-08T08:00:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "IRS doesn't email about refunds",
+      "Suspicious domain (.org instead of .gov)",
+      "Requests SSN and bank info",
+      "Requests processing fee (scam)",
+      "Time pressure",
+      "Too good to be true"
+    ]
+  },
+  {
+    "id": 25,
+    "sender": "security@discord.com",
+    "sender_name": "Discord",
+    "subject": "New login from Windows PC",
+    "body": "Hi,\n\nThere was a new login to your Discord account:\n\nDevice: Windows PC\nLocation: Chicago, IL\nTime: October 8, 2025 at 3:15 PM\n\nIf this was you, no action needed.\n\nIf this wasn't you, secure your account:\nhttps://discord.com/account/security\n\nDiscord",
+    "timestamp": "2025-10-08T15:20:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 26,
+    "sender": "help@customer-servicee.com",
+    "sender_name": "Customer Service",
+    "subject": "Re: Your inquiry about order #45893",
+    "body": "Dear Valued Customer,\n\nThank you for contacting us regarding your order.\n\nTo assist you better, please provide:\n- Your full name\n- Credit card number (for verification)\n- CVV code\n- Billing address\n\nReply to this email with the information above and we'll resolve your issue immediately.\n\nThank you,\nCustomer Service Team",
+    "timestamp": "2025-10-08T12:00:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Suspicious generic domain",
+      "Requests full credit card details including CVV",
+      "Generic sender name",
+      "No specific company mentioned",
+      "Unusual information request"
+    ]
+  },
+  {
+    "id": 27,
+    "sender": "team@zoom.us",
+    "sender_name": "Zoom",
+    "subject": "Meeting invitation: Project Review",
+    "body": "Hi,\n\nYou've been invited to a Zoom meeting:\n\nTopic: Project Review\nHost: Jennifer Lee\nTime: October 10, 2025 at 2:00 PM EST\n\nJoin meeting: https://zoom.us/j/1234567890\nMeeting ID: 123 456 7890\nPasscode: 987654\n\nZoom",
+    "timestamp": "2025-10-08T09:15:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 28,
+    "sender": "admin@document-share.xyz",
+    "sender_name": "Shared Document",
+    "subject": "Document requires your signature",
+    "body": "Hello,\n\nA confidential document has been shared with you and requires your electronic signature.\n\nDocument: Employment_Contract_Final.pdf\nShared by: HR Department\n\nClick to review and sign:\nhttp://document-share.xyz/sign?doc=8473829\n\nNote: You must login with your work email credentials to access the document.\n\nThis link expires in 24 hours.\n\nDocument Management System",
+    "timestamp": "2025-10-08T11:45:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Suspicious domain",
+      "Credential harvesting attempt (requests work email login)",
+      "Generic sender",
+      "Creates urgency with expiration",
+      "Not from recognized e-signature service"
+    ]
+  },
+  {
+    "id": 29,
+    "sender": "payments@square.com",
+    "sender_name": "Square",
+    "subject": "Payment received - $125.00",
+    "body": "Hi,\n\nYou received a payment!\n\nFrom: John Martinez\nAmount: $125.00\nNote: Consulting services\nDate: October 8, 2025\n\nThe money has been deposited to your linked bank account.\n\nView details: https://squareup.com/dashboard/payments\n\nSquare",
+    "timestamp": "2025-10-08T14:00:00Z",
+    "actual_label": "legitimate",
+    "phishing_indicators": []
+  },
+  {
+    "id": 30,
+    "sender": "support@yourbank-alert.com",
+    "sender_name": "Bank Security Alert",
+    "subject": "Fraud Alert: Confirm These Transactions",
+    "body": "FRAUD ALERT\n\nWe detected potentially fraudulent transactions on your account:\n\nTransaction 1: $3,499.00 - Electronics Store\nTransaction 2: $1,250.00 - Online Casino\nTransaction 3: $890.00 - International Transfer\n\nDid you authorize these transactions?\n\nYES - Click here: http://yourbank-alert.com/confirm-yes\nNO - Click here: http://yourbank-alert.com/confirm-no\n\nYou must respond within 1 hour or all transactions will be approved.\n\nBank Fraud Prevention Team",
+    "timestamp": "2025-10-08T16:40:00Z",
+    "actual_label": "phishing",
+    "phishing_indicators": [
+      "Suspicious domain (not legitimate bank domain)",
+      "Creates extreme urgency (1 hour)",
+      "Uses scare tactics with fake transactions",
+      "Suspicious links",
+      "Generic bank name",
+      "Poor formatting (ALL CAPS)"
+    ]
+  }
+]

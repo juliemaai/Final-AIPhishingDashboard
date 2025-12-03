@@ -1,0 +1,493 @@
+{
+  "name": "Email Ingestion & Classification",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -896,
+        -64
+      ],
+      "id": "ae90b138-30ae-41eb-a94f-b2620c5552b7",
+      "name": "Start - Test Email"
+    },
+    {
+      "parameters": {
+        "jsCode": "const testEmails = [\n  // === PHISHING EMAILS (1-5) ===\n  {\n    sender: \"billing@amaz0n-billing.net\",\n    sender_name: \"Amazon Billing\",\n    subject: \"Payment Failed - Update Required\",\n    body: \"Hello,\\n\\nYour recent payment for Amazon Prime failed to process.\\n\\nPlease update your payment information immediately to avoid service interruption:\\nhttps://amaz0n-payment-update.net/billing\\n\\nAmazon Billing Department\"\n  },\n\n  // === SPAM EMAILS (6-7) ===\n  {\n    sender: \"deals@luxury-timepieces-mega-sale.com\",\n    sender_name: \"Luxury Watches Direct\",\n    subject: \"Limited Time Offer: 90% OFF Luxury Watches!!!\",\n    body: \"ACT NOW! Authentic Rolex, Omega, and Cartier watches at 90% off retail prices!\\n\\nThese are GENUINE luxury timepieces, not replicas.\\n\\nThis exclusive offer expires in 6 hours! Free shipping worldwide!\\n\\nClick here to browse: http://watches-sale.net/special\"\n  },\n\n  // === LEGITIMATE EMAILS (8-10) ===\n  {\n    sender: \"notifications@linkedin.com\",\n    sender_name: \"LinkedIn\",\n    subject: \"You appeared in 15 searches this week\",\n    body: \"Hi there,\\n\\nYour profile appeared in 15 searches this week. People are looking for candidates with your skills.\\n\\nUpdate your profile to stand out.\\n\\nBest regards,\\nThe LinkedIn Team\"\n  },\n];\n\n// RETURN ALL EMAILS\nreturn testEmails.map(email => ({ json: email }));\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -688,
+        -64
+      ],
+      "id": "549da285-d243-4051-8293-7bb27dee79ca",
+      "name": "Sample Test Email"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-5-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-5-MINI"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=You are an expert email security analyst. Analyze this email for phishing indicators. EMAIL DATA: Sender Domain: {{ $json.sender_domain }} Sender Email: {{ $json.sender }} Sender Name: {{ $json.sender_name }} Subject: {{ $json.subject }} Body: {{ $json.body }} METADATA: Number of Links: {{ $json.link_count }} Links Found: {{ $json.links_found }} Suspicious Links: {{ $json.suspicious_link_count }} Has Urgency Language: {{ $json.has_urgency }} ANALYSIS CRITERIA: 1. Sender Authenticity - Domain spoofing (e.g., paypa1.com vs paypal.com) - Free email services for business emails - Mismatched sender name and email 2. Content Analysis - Urgency/pressure tactics (\"act now\", \"suspended\") - Threats (\"account will be closed\") - Requests for credentials or payment info - Too-good-to-be-true offers 3. Technical Indicators - Suspicious URLs (typos, unusual domains) - URL shorteners - Mismatched display text vs actual link 4. Language Quality - Grammar and spelling errors - Generic greetings (\"Dear Customer\") - Professional tone vs suspicious tone 5. Brand Impersonation - Claims to be from known company - Uses company branding/language - But has suspicious elements RESPONSE FORMAT: Respond with ONLY valid JSON (no other text): { \"classification\": \"phishing\" OR \"legitimate\" OR \"spam\", \"confidence\": 0-100, \"risk_level\": \"high\" OR \"medium\" OR \"low\", \"reasoning\": \"2-3 sentence explanation of why you classified it this way\", \"indicators_found\": [\"indicator 1\", \"indicator 2\", \"indicator 3\"], \"recommended_action\": \"delete\" OR \"review\" OR \"safe\", \"suspicious_elements\": [\"element 1\", \"element 2\"] } IMPORTANT: - Be conservative: if unsure, classify as \"phishing\" with lower confidence - High confidence (>90%) only for obvious cases - Medium confidence (60-89%) for suspicious but not certain - Low confidence (<60%) for unclear cases - Always include specific reasoning"
+            }
+          ]
+        },
+        "options": {
+          "maxTokens": 4000,
+          "temperature": 1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        -320,
+        -64
+      ],
+      "id": "43bf7624-418f-4501-b03c-d8c5f1a7ec47",
+      "name": "AI Classify Email",
+      "credentials": {
+        "openAiApi": {
+          "id": "ODlRu6eIRYdVkLvY",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process ALL emails at once\nconst items = $input.all();\n\nconsole.log(\"Total items to process:\", items.length);\n\nconst processedEmails = items.map((item, index) => {\n  const email = item.json;\n  \n  console.log(`Processing ${index + 1}:`, email.sender, email.subject);\n  \n  // Extract domain\n  const sender_domain = (email.sender || '').split('@')[1] || 'unknown';\n  \n  // Extract links\n  const linkRegex = /(https?:\\/\\/[^\\s]+)/g;\n  const links = (email.body || '').match(linkRegex) || [];\n  \n  // Suspicious links\n  const suspicious_domains = links.filter(link => {\n    const domainMatch = link.match(/https?:\\/\\/([^\\/\\s]+)/);\n    if (!domainMatch) return false;\n    const domain = domainMatch[1].toLowerCase();\n    return domain.includes('1') || domain.includes('0') || \n           domain.includes('-') || domain.endsWith('.biz') ||\n           domain.endsWith('.info');\n  });\n  \n  // Urgency check\n  const urgency_keywords = ['urgent', 'immediate', 'suspended', 'verify now', 'act now', 'expires'];\n  const has_urgency = urgency_keywords.some(kw => \n    (email.subject || '').toLowerCase().includes(kw) ||\n    (email.body || '').toLowerCase().includes(kw)\n  );\n  \n  // Credentials check\n  const cred_keywords = ['password', 'credit card', 'social security', 'bank account'];\n  const requests_credentials = cred_keywords.some(kw =>\n    (email.body || '').toLowerCase().includes(kw)\n  );\n  \n  // Unique ID with index to ensure uniqueness\n  const id = Date.now() + '-' + index + '-' + Math.random().toString(36).substr(2, 9);\n  \n  return {\n    json: {\n      id: id,\n      received_date: new Date().toISOString(),\n      sender: email.sender,\n      sender_name: email.sender_name || email.sender.split('@')[0],\n      sender_domain: sender_domain,\n      subject: email.subject || '',\n      body: email.body || '',\n      links_found: links.join(', '),\n      link_count: links.length,\n      suspicious_link_count: suspicious_domains.length,\n      has_urgency: has_urgency,\n      requests_credentials: requests_credentials\n    }\n  };\n});\n\nconsole.log(\"Processed emails:\", processedEmails.length);\n\nreturn processedEmails;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -480,
+        -64
+      ],
+      "id": "38178a13-4496-4171-bcd1-fa33e6f0444e",
+      "name": "Pre-processing"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get all AI responses and all email data\nconst aiItems = $input.all();\nconst emailItems = $('Pre-processing').all();\n\nconst combined = aiItems.map((aiItem, index) => {\n  const emailData = emailItems[index].json;\n  const aiResponse = aiItem.json;\n  \n  let aiAnalysis;\n  try {\n    if (aiResponse.choices && aiResponse.choices[0]) {\n      const content = aiResponse.choices[0].message.content;\n      const cleaned = content.replace(/```json\\n?/g, '').replace(/```\\n?/g, '').trim();\n      aiAnalysis = JSON.parse(cleaned);\n    } else {\n      aiAnalysis = aiResponse;\n    }\n  } catch (e) {\n    aiAnalysis = {\n      classification: 'phishing',\n      confidence: 50,\n      risk_level: 'medium',\n      reasoning: 'Parse error',\n      indicators_found: []\n    };\n  }\n  \n  return {\n    json: {\n      ...emailData,\n      ai_classification: aiAnalysis.classification,\n      ai_confidence: aiAnalysis.confidence,\n      ai_reasoning: aiAnalysis.reasoning,\n      risk_level: aiAnalysis.risk_level,\n      indicators_found: Array.isArray(aiAnalysis.indicators_found) \n        ? aiAnalysis.indicators_found.join(', ') \n        : ''\n    }\n  };\n});\n\nreturn combined;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -32,
+        -64
+      ],
+      "id": "036ab4a6-bbb3-44da-994c-6dd4eb732ee7",
+      "name": "Parse AI Response"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Process all items and ADD placeholder AI classification\nconst items = $input.all();\n\nconsole.log(\"Calculate Priority - Processing items:\", items.length);\n\nconst withPriorityAndAI = items.map((item, index) => {\n  const data = item.json;\n  \n  console.log(`Priority calc ${index + 1}:`, data.sender);\n  \n  // ADD PLACEHOLDER AI CLASSIFICATION if missing\n  let ai_classification = data.ai_classification;\n  let ai_confidence = data.ai_confidence;\n  let ai_reasoning = data.ai_reasoning;\n  let risk_level = data.risk_level;\n  let indicators_found = data.indicators_found;\n  \n  // If AI data is missing, generate placeholder based on email content\n  if (!ai_classification) {\n    const sender = (data.sender || '').toLowerCase();\n    const subject = (data.subject || '').toLowerCase();\n    const domain = (data.sender_domain || '').toLowerCase();\n    \n    // Simple heuristic classification\n    if (domain.includes('1') || domain.includes('0') || \n        domain.endsWith('.biz') || domain.endsWith('.info') ||\n        subject.includes('urgent') || subject.includes('suspended') ||\n        subject.includes('verify') || subject.includes('confirm')) {\n      ai_classification = 'phishing';\n      ai_confidence = 85;\n      risk_level = 'high';\n      ai_reasoning = 'Email exhibits suspicious domain characteristics and urgency tactics commonly used in phishing attacks.';\n      indicators_found = 'domain spoofing, urgency/pressure tactics, suspicious URL';\n    } else if (subject.includes('win') || subject.includes('$') || \n               subject.includes('free') || subject.includes('offer')) {\n      ai_classification = 'spam';\n      ai_confidence = 75;\n      risk_level = 'medium';\n      ai_reasoning = 'Email contains promotional language and unsolicited offers typical of spam.';\n      indicators_found = 'unsolicited offer, promotional content';\n    } else {\n      ai_classification = 'legitimate';\n      ai_confidence = 70;\n      risk_level = 'low';\n      ai_reasoning = 'Email appears to be from a legitimate source with normal content patterns.';\n      indicators_found = '';\n    }\n  }\n  \n  // Calculate priority score\n  let priorityScore = 0;\n  \n  if (risk_level === 'high') priorityScore += 3;\n  else if (risk_level === 'medium') priorityScore += 2;\n  else priorityScore += 1;\n  \n  if (ai_confidence > 80) priorityScore += 2;\n  else if (ai_confidence > 60) priorityScore += 1;\n  \n  if (ai_classification === 'phishing') priorityScore += 2;\n  else if (ai_classification === 'spam') priorityScore += 1;\n  \n  let priority = 'low';\n  if (priorityScore >= 5) priority = 'high';\n  else if (priorityScore >= 3) priority = 'medium';\n  \n  return {\n    json: {\n      ...data,\n      // Add or override AI classification fields\n      ai_classification: ai_classification,\n      ai_confidence: ai_confidence,\n      ai_reasoning: ai_reasoning,\n      risk_level: risk_level,\n      indicators_found: indicators_found,\n      priority: priority,\n      status: 'pending_review'\n    }\n  };\n});\n\nconsole.log(\"Priority calculated for:\", withPriorityAndAI.length, \"emails\");\n\nreturn withPriorityAndAI;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        160,
+        -64
+      ],
+      "id": "704d111d-6302-4f9a-b688-83eb625f8282",
+      "name": "Calculate Priority"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1nZTBpp38FTrY-4ujRoQdLT3v3N5MuZ1U36pQDAi7jAU",
+          "mode": "list",
+          "cachedResultName": "Phishing detection database",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1nZTBpp38FTrY-4ujRoQdLT3v3N5MuZ1U36pQDAi7jAU/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "id"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "received_date": "={{ $json.received_date }}",
+            "sender": "={{ $json.sender }}",
+            "sender_name": "={{ $json.sender_name }}",
+            "sender_domain": "={{ $json.sender_domain }}",
+            "subject": "={{ $json.subject }}",
+            "body": "={{ $json.body }}",
+            "links_found": "={{ $json.links_found }}",
+            "link_count": "={{ $json.link_count }}",
+            "ai_classification": "={{ $json.ai_classification }}",
+            "ai_confidence": "={{ $json.ai_confidence }}",
+            "ai_reasoning": "={{ $json.ai_reasoning }}",
+            "risk_level": "={{ $json.risk_level }}",
+            "indicators_found": "={{ $json.indicators_found }}",
+            "priority": "={{ $json.priority }}",
+            "status": "={{ $json.status }}",
+            "id": "={{ $json.id }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "received_date",
+              "displayName": "received_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sender",
+              "displayName": "sender",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sender_name",
+              "displayName": "sender_name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "sender_domain",
+              "displayName": "sender_domain",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "subject",
+              "displayName": "subject",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "body",
+              "displayName": "body",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "links_found",
+              "displayName": "links_found",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "link_count",
+              "displayName": "link_count",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ai_classification",
+              "displayName": "ai_classification",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ai_confidence",
+              "displayName": "ai_confidence",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "ai_reasoning",
+              "displayName": "ai_reasoning",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "risk_level",
+              "displayName": "risk_level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "indicators_found",
+              "displayName": "indicators_found",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "priority",
+              "displayName": "priority",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "reviewer_decision",
+              "displayName": "reviewer_decision",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "reviewer_notes",
+              "displayName": "reviewer_notes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "reviewed_by",
+              "displayName": "reviewed_by",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "reviewed_date",
+              "displayName": "reviewed_date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "is_correct",
+              "displayName": "is_correct",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "priority_score",
+              "displayName": "priority_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "0",
+              "displayName": "0",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        352,
+        -64
+      ],
+      "id": "6ec81033-9dd0-49ba-b751-88641cca990e",
+      "name": "Save to Database",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "pQdQ5K7GLHca3iA6",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "const testEmails = [\n  // === PHISHING EMAILS (1-5) ===\n  {\n    sender: \"billing@amaz0n-billing.net\",\n    sender_name: \"Amazon Billing\",\n    subject: \"Payment Failed - Update Required\",\n    body: \"Hello,\\n\\nYour recent payment for Amazon Prime failed to process.\\n\\nPlease update your payment information immediately to avoid service interruption:\\nhttps://amaz0n-payment-update.net/billing\\n\\nAmazon Billing Department\"\n  },\n  {\n    sender: \"security@paypa1-secure-alert.com\",\n    sender_name: \"PayPal Security\",\n    subject: \"Unusual Login Attempt Detected\",\n    body: \"Dear Customer,\\n\\nWe detected a suspicious login attempt on your PayPal account. Please verify your identity to avoid account suspension:\\nhttps://paypa1-verify-account.com/login\\n\\nPayPal Security Team\"\n  },\n  {\n    sender: \"it-support@company-verification.net\",\n    sender_name: \"IT Support\",\n    subject: \"Mandatory Password Reset\",\n    body: \"Attention Employee,\\n\\nYour password has expired and must be reset within 12 hours to avoid account lockout.\\n\\nReset here:\\nhttp://corp-security-reset.net/reset\\n\\nIT Support Desk\"\n  },\n  {\n    sender: \"helpdesk@microsoft-secureverify.co\",\n    sender_name: \"Microsoft Support\",\n    subject: \"Your Microsoft Account Will Be Disabled\",\n    body: \"Hi,\\n\\nYour Microsoft account has been flagged for irregular activity. To prevent deactivation, please confirm your details:\\nhttps://secure-microsoft-verify.co/confirm\\n\\nMicrosoft Account Security\"\n  },\n  {\n    sender: \"rewards@apple-bonus-gift.net\",\n    sender_name: \"Apple Rewards\",\n    subject: \"Claim Your Apple Loyalty Reward\",\n    body: \"Congratulations!\\n\\nYou have been selected for an exclusive Apple customer reward. Confirm your Apple ID to redeem your gift:\\nhttp://apple-reward-confirm.net/redeem\\n\\nApple Customer Rewards\"\n  },\n\n  // === SPAM EMAILS (6-7) ===\n  {\n    sender: \"deals@luxury-timepieces-mega-sale.com\",\n    sender_name: \"Luxury Watches Direct\",\n    subject: \"Limited Time Offer: 90% OFF Luxury Watches!!!\",\n    body: \"ACT NOW! Authentic Rolex, Omega, and Cartier watches at 90% off retail prices!\\n\\nThese are GENUINE luxury timepieces, not replicas.\\n\\nThis exclusive offer expires in 6 hours! Free shipping worldwide!\\n\\nClick here to browse: http://watches-sale.net/special\"\n  },\n  {\n    sender: \"offers@get-rich-quick-system.com\",\n    sender_name: \"Millionaire Mentor\",\n    subject: \"This One Secret Made Me a Millionaire!\",\n    body: \"I discovered ONE SIMPLE TRICK that made me $1 million in 6 months!\\n\\nNow I'm sharing this SECRET with 100 lucky people!\\n\\nNo experience needed! Start earning TODAY!\\n\\nWatch my video: http://millionaire-secret.com/video\\n\\nFREE training - Limited spots!\"\n  },\n\n  // === LEGITIMATE EMAILS (8-10) ===\n  {\n    sender: \"notifications@linkedin.com\",\n    sender_name: \"LinkedIn\",\n    subject: \"You appeared in 15 searches this week\",\n    body: \"Hi there,\\n\\nYour profile appeared in 15 searches this week. People are looking for candidates with your skills.\\n\\nUpdate your profile to stand out.\\n\\nBest regards,\\nThe LinkedIn Team\"\n  },\n  {\n    sender: \"receipts@uber.com\",\n    sender_name: \"Uber\",\n    subject: \"Your Uber Receipt\",\n    body: \"Hi,\\n\\nThanks for riding with Uber.\\n\\nYour fare for this trip: $12.84\\n\\nView your trip details in the app.\\n\\n— The Uber Team\"\n  },\n  {\n    sender: \"support@zoom.us\",\n    sender_name: \"Zoom Support\",\n    subject: \"Your Zoom Meeting Recording Is Ready\",\n    body: \"Hello,\\n\\nYour cloud recording is now available. You can access it using the link in your Zoom dashboard.\\n\\nThanks for using Zoom,\\nZoom Support Team\"\n  },\n];\n\n// RETURN ALL EMAILS\nreturn testEmails.map(email => ({ json: email }));\n",
+        "height": 320,
+        "width": 800
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -1008,
+        -1040
+      ],
+      "id": "a8a9b9cc-d1fd-47bc-9958-825539475ff4",
+      "name": "Sticky Note"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Start - Test Email": {
+      "main": [
+        [
+          {
+            "node": "Sample Test Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sample Test Email": {
+      "main": [
+        [
+          {
+            "node": "Pre-processing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pre-processing": {
+      "main": [
+        [
+          {
+            "node": "AI Classify Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Classify Email": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Response": {
+      "main": [
+        [
+          {
+            "node": "Calculate Priority",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate Priority": {
+      "main": [
+        [
+          {
+            "node": "Save to Database",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Database": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "fef395d4-b095-43fb-9cd8-c6b3e4f2e712",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "21b7789d534d564fdbd5cfffa1fa941d5fa0bacc0ede886c5620f1d0c206e28a"
+  },
+  "id": "2sDiRtWA33l689aP",
+  "tags": []
+}
